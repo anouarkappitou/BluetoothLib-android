@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 /**
@@ -26,6 +27,8 @@ public class Bluetooth {
     public static final int NO_ADAPTER_FOUND = 1008;
     public static final int BLUETOOTH_ADAPTER_NOT_FOUND = 1010;
 
+    public static final int BLUETOOTH_PERMISSION = 500;
+
     public Bluetooth(Context context )
     {
        _context = context;
@@ -41,6 +44,12 @@ public class Bluetooth {
                 _errCallback.onError( BLUETOOTH_ADAPTER_NOT_FOUND );
             }
             return;
+        }
+
+        if( !check_for_bluetooth_permission() )
+        {
+            if( _errCallback != null )
+                _errCallback.onError( BLUETOOTH_PERMISSION );
         }
 
         if( !_adapter.isEnabled() )
@@ -114,7 +123,7 @@ public class Bluetooth {
             return null;
         }
 
-        BluetoothServer server = new BluetoothServer( _adapter );
+        BluetoothServer server = new BluetoothServer( _adapter , _context );
         return server;
     }
 
@@ -131,7 +140,7 @@ public class Bluetooth {
         }
 
         cancel_discovery();
-        BluetoothClient client = new BluetoothClient( _adapter );
+        BluetoothClient client = new BluetoothClient( _adapter , _context );
         return client;
     }
 
@@ -145,4 +154,18 @@ public class Bluetooth {
         _errCallback = error;
     }
 
+
+    public boolean check_for_bluetooth_permission()
+    {
+        String permission = "android.permission.BLUETOOTH";
+        int res = _context.checkCallingOrSelfPermission( permission );
+        return ( res == PackageManager.PERMISSION_GRANTED );
+    }
+
+    public boolean check_for_bluetooth_admin_persmission()
+    {
+         String permission = "android.permission.BLUETOOTH_ADMIN";
+        int res = _context.checkCallingOrSelfPermission( permission );
+        return ( res == PackageManager.PERMISSION_GRANTED );
+    }
 }

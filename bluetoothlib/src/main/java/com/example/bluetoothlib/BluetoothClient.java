@@ -3,10 +3,13 @@ package com.example.bluetoothlib;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.UUID;
+
+import static com.example.bluetoothlib.Bluetooth.BLUETOOTH_PERMISSION;
 
 /**
  * Created by anouarkappitou on 7/28/17.
@@ -20,10 +23,12 @@ public class BluetoothClient {
     private BluetoothAdapter _adapter;
     private IError _errCallback;
     private IConnection _callback;
+    private Context _context;
 
-    public BluetoothClient( BluetoothAdapter adapter )
+    public BluetoothClient( BluetoothAdapter adapter , Context context )
     {
         _adapter = adapter;
+        _context = context;
     }
 
     public void mac_connect( String address )
@@ -56,6 +61,15 @@ public class BluetoothClient {
         {
             _UID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
             try {
+                if( BluetoothUtils.check_bluetooth_permission( _context ) )
+                {
+                    if( _errCallback != null )
+                    {
+                        _errCallback.onError( BLUETOOTH_PERMISSION );
+                    }
+                    return;
+                }
+
                 _socket = device.createInsecureRfcommSocketToServiceRecord( _UID );
                 if( _socket == null )
                 {
