@@ -23,30 +23,30 @@
 
 # usage
 
- * add bluetooth permissions to you manifest file
+ * add bluetooth permissions to your manifest file
  
- ```
+ ```xml
 <uses-permission android:name="android.permission.BLUETOOTH" />
 <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 ```
 
  * instanciate bluetooth object
  
-  ```
+  ```java
 Bluetooth bluetooth = new Bluetooth(Context);
 ```
 
 
  * Enable bluetooth adapter
  
- ```
+ ```java
 bluetooth.enable();
 ```
 
 
 * Set OnDeviceFound callback
  
- ```
+ ```java
 bluetooth.set_found_callback(new IFoundCallback() {
             @Override
             public void onDevice(BluetoothDevice device) {
@@ -58,7 +58,7 @@ bluetooth.set_found_callback(new IFoundCallback() {
 
 * Start discovery
  
- ```
+ ```java
 bluetooth.start_discovery();
 ```
 
